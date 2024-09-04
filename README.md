@@ -166,15 +166,18 @@ Restart telegraf
 ```
 sudo systemctl restart telegraf
 ```
----
-Enable and start rpi-connect
-```
-systemctl --user enable rpi-connect
-systemctl --user start rpi-connect
-```
 
-Connect the Pi to your Raspberry Pi account
+# WiFi Configuration
+Changing the WiFi network requires the new connection to be added to the Pi before the customer changes their network.\
+Connect to the Pi and access the Network Manger terminal interface.
 ```
-rpi-connect signin
+sudo nmtui
 ```
-A link will appear. Enter that into your browser and follow the instructions.
+Your terminal should now look like this.\
+<img src="assets/nmtui_home.png" alt="drawing" width="400"/>
+
+Choose `Edit a connection -> preconfigured`.\
+Change the `SSID` and `Password` field with the new SSID and password then choose `Ok`.\
+<img src="assets/nmtui_con.png" alt="drawing" width="400"/>\
+Exit back to the terminal, and the next time the Pi boots up, it should connect to the updated network.
+To connect to the Pi again, refer to [this section](#connecting-to-the-piconnection).

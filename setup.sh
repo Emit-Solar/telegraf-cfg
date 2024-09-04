@@ -23,7 +23,7 @@ echo "Modifying config.txt..."
 sudo bash -c 'echo "enable_uart=1" >> /boot/firmware/config.txt'
 
 echo "Installing rpi-connect..."
-apt-get install rpi-connect-lite
+apt-get install rpi-connect
 sudo loginctl enable-linger
 
 sudo bash -c 'echo "211.24.220.161  723tgfhf7917f32.time.com.my" >> /etc/hosts'
