@@ -24,5 +24,8 @@ sudo bash -c 'echo "enable_uart=1" >> /boot/firmware/config.txt'
 
 echo "Installing rpi-connect..."
 apt-get install rpi-connect-lite
-sudo systemctl --user enable rpi-connect
 sudo loginctl enable-linger
+
+sudo bash -c 'echo "211.24.220.161  723tgfhf7917f32.time.com.my" >> /etc/hosts'
+
+sudo reboot now

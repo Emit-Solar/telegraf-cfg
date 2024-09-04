@@ -1,44 +1,26 @@
-﻿Inverter to Grafana
+﻿# Emit Solar Monitoring Pi
 
 By directly accessing customers’ inverters, it removes the need to rely on third-party software and also provides greater insight and analysis into the solar PV system. Not only is this solution cost-effective, it is relatively easy to implement, requiring simple hardware and minimal knowledge.
 
 # Hardware
-**Raspberry Pi 3A+**
+- **Raspberry Pi 3A+**
 
-Specs
+- **WaveShare RS485 Can Hat**
 
-- Built in Wi-Fi with 2.4/5GHz support
-- Populated 40-pi GPIO header
-- 512 MB RAM
-- micro-USB power port
-- HDMI and USB 2.0 port
-- MicroSD card slot
+   This allows the Pi to access the inverter via the RS485 port
 
-This is the ideal model due to its in-build features that do not require additional attachments, which may complicate the installation process. Its relatively small size allows it to be installed easily alongside the inverter.
+- **Miscellaneous**
 
-Price: MYR 135 (Cytron)
+   - 5V/2.5A micro-USB power supply
 
-**WaveShare RS485 Can Hat**
+      A 5V/2.5A power supply is important, as a weaker supply may cause the Pi to underperform or not turn on at all, while a stronger supply may cause heating issues that will reduce its lifespan and damage the Pi in the long run.
 
-This allows the Pi to access the inverter via the RS485 port
-
-Price: MYR 65 (Cytron)
-
-**Miscellaneous**
-
-- 5V/2.5A micro-USB power supply
-
-   A 5V/2.5A power supply is important, as a weaker supply may cause the Pi to underperform or not turn on at all, while a stronger supply may cause heating issues that will reduce its lifespan and damage the Pi in the long run.
-
-- TP-Link TL-WN727N Wi-Fi antenna (optional)
+   - TP-Link TL-WN727N Wi-Fi antenna (optional)
 
 
-   If the Pi is unable to connect to the client's Wi-Fi due to location or the material of the combiner box, a Wi-Fi antenna may help with this.
-
-
-- Micro-SD card
-- Case
-
+      If the Pi is unable to connect to the client's Wi-Fi due to location or the material of the combiner box, a Wi-Fi antenna may help with this.
+   - Micro-SD card
+   - Case with DIN rail attachment
 
 
 # Installation
@@ -48,16 +30,19 @@ Required software:
 - PuTTy (https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)
 - Raspberry Pi Imager (https://www.raspberrypi.com/software/)
 - Nmap (https://nmap.org/download#windows)
+- A Raspberrt Pi account (https://id.raspberrypi.com/sign-up)
+
+---
 
 ### OS Setup
 Attach the can hat to the Pi’s pins as shown below.\
 <img src="assets/hardware.jpg" alt="drawing" width="200"/>
 
 Insert the MicroSD car into your laptop and laucnh the Raspberry Pi Imager.
-Select Raspberry Pi 3 for the model and Raspberry Pi OS Lite, which can be found by going to `Choose OS -> Raspberry Pi OS (Other) -> Raspberry Pi OS Lite (64-bit)` and select the microSD card's model for Storage.
+Select Raspberry Pi 3 for the model and Raspberry Pi OS Lite, which can be found by going to `Choose OS -> Raspberry Pi OS (Other) -> Raspberry Pi OS Lite (64-bit)` and select the microSD card's model for Storage.\
 <img src="assets/rpi.png" alt="drawing" width="400"/>
 
-Select `Next -> Edit Settings` and configure the settings as shown below.
+Select `Next -> Edit Settings` and configure the settings as shown below.\
 <img src="assets/rpi_settings.png" alt="drawing" width="400"/>\
 >**NOTE**: Change the hostname from "tutorial" to the customer's name, and ensure it is unique. Wi-Fi is the office router's SSID and password. Remember the username and password as it will be used to login into the Pi later on.
 
@@ -66,6 +51,7 @@ Enable SSH with password authentication.\
 
 Apply the changes and allow the program to write to the SD card. Once complete, insert the SD card into its designated slot under the Pi and boot it up with the micro-USB adapter. Give it a few minutes to setup.
 
+---
 ### Connecting to the Pi
 
 To connect to the Pi via SSH, you will need the Pi's IP address. \
@@ -101,19 +87,27 @@ Launch PuTTy and connect to this address. A pop-up should appear. Select Accept 
 
 A login prompt should appear. Enter the username and password you entered previously when installing the OS.
 
+---
+
+### Configuring the Pi
 Enter the raspi-config screen.
 ```
 sudo raspi-config
 ```
-A blue screen with options should appear. Using your arrow keys, Choose `System Options -> Boot/ Auto Login -> Console AutoLogin`. It should bring you back to the home screen.\
+A blue screen with options should appear. \
+Using your arrow keys, choose `System Options -> Boot/ Auto Login -> Console AutoLogin`. It should bring you back to the home screen.\
 Next choose `Interface Options -> Serial Port -> No -> Yes`.\
 Choose `Finish -> No` to return back to the terminal.
+
+---
 
 Due to restrictions on the TIME network, you must also manually set the time and date.
 ```
 sudo date -s "<DAY> <MONTH> <DATE> <HH>:<MM>:<SS> UTC <YYYY>"
 ```
 >**NOTE:** The time must be in UTC
+
+---
 
 Next update the system and install git, then clone and navigate to this repository.
 ```
@@ -132,13 +126,13 @@ Replacing \<INVERTER\> with the corresponding brand.\
 
 At the top of the file, under the `[global_tags]` section, there are two variables, `station` and `capacity`. Enter the customer's name in between the quotation marks for `station`, and replace any spaces with `_`. Do the same for capacity, in watts.
 
->**EXAMPLE**
+**EXAMPLE**
 ```toml
 [global_tags]
 station = "test_123"
 capacity = "9860"
 ```
-Save the file with `Ctrl-o` + `Enter` + `Ctrl-x`.
+Save the file with `Ctrl-O` + `Enter` + `Ctrl-X`.
 
 Next, execute the `setup.sh` file.
 ```
@@ -148,18 +142,39 @@ This will setuo the CAN HAT and install telegraf and rpi-connect.
 A prompt will also ask you if the customer's inverter is Huawei or Growatt.
 Once complete, the Pi will reboot.
 
+---
 
+Reconnect to the Pi using the same steps above.\
+Check telegraf is running successfully
+```
+systemctl status telegraf.service
+```
+If you see an `Error in plugin: could not open /dev/ttyAMA0: no such file or directory`, check the serial number of the CAN HAT.
+```
+$ ls -l /dev/serial*
+lrwxrwxrwx 1 root root 5, 0 Sep  4 11:46 /dev/serial0 -> ttyS0
+```
+`ttyS0` is the new serial name. Open the telegraf configuration with
+```
+sudo nano /etc/telegraf/telegraf.conf
+```
+and modify `controller` line, replacing `ttyAMA0` with `ttyS0`
+```toml
+  controller = "file:///dev/ttyS0"
+```
+Restart telegraf
+```
+sudo systemctl restart telegraf
+```
+---
+Enable and start rpi-connect
+```
+systemctl --user enable rpi-connect
+systemctl --user start rpi-connect
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+Connect the Pi to your Raspberry Pi account
+```
+rpi-connect signin
+```
+A link will appear. Enter that into your browser and follow the instructions.
