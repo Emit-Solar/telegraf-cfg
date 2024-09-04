@@ -138,7 +138,7 @@ Next, execute the `setup.sh` file.
 ```
 sudo ./setup.sh
 ```
-This will setuo the CAN HAT and install telegraf and rpi-connect.
+This will setuo the CAN HAT and install telegraf.
 A prompt will also ask you if the customer's inverter is Huawei or Growatt.
 Once complete, the Pi will reboot.
 
@@ -180,4 +180,4 @@ Choose `Edit a connection -> preconfigured`.\
 Change the `SSID` and `Password` field with the new SSID and password then choose `Ok`.\
 <img src="assets/nmtui_con.png" alt="drawing" width="400"/>\
 Exit back to the terminal, and the next time the Pi boots up, it should connect to the updated network.
-To connect to the Pi again, refer to [this section](#connecting-to-the-piconnection).
+To connect to the Pi again, refer to [this section](#connecting-to-the-pi).
