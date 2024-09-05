@@ -86,6 +86,11 @@ Launch PuTTy and connect to this address. A pop-up should appear. Select Accept 
 A login prompt should appear. Enter the username and password you entered previously when installing the OS.
 
 ---
+### RPI-Connect
+If you have already configured `rpi-connect` on the Pi, it can also be remotely accessed from anywhere from https://connect.raspberrypi.com/devices.
+> **NOTE** This software is still in development, and there will be times when it cannot be accessed.
+
+---
 
 ### Configuring the Pi
 
@@ -101,6 +106,7 @@ Update the system and enter the raspi-config screen.
 ```
 sudo apt-get update
 sudo apt-get upgrade
+sudo apt-get install git
 sudo raspi-config
 ```
 A blue screen with options should appear. \
@@ -110,11 +116,11 @@ Finally, choose `Interface Options -> RPi Connect -> Yes`. Follow any on-screen 
 Choose `Finish -> Yes` to reboot. 
 
 ---
+### Post-boot configuration
 Once it has rebooted, reconnect to it and update the system.\
 Setup rpi-connect by running `rpi-connect signin` and follow the displayed instrcuctions.\
 Next, install git, then clone and navigate to this repository.
 ```
-sudo apt-get install git
 git clone https://github.com/xyberii4/emit-monitoring-pi.git
 cd emit-monitoring-pi
 ```
@@ -167,6 +173,7 @@ Restart telegraf
 ```
 sudo systemctl restart telegraf
 ```
+Proceed to [Wi-Fi Configuration](#wi-fi-configuration) to change the saved network to the customer's network. When installing on-site, it should then automatically connect to their network.
 
 ---
 
@@ -178,10 +185,10 @@ sudo rpi-clone -s <HOST> sda
 ```
 Replace `<HOST>` with the new hostname you want for the Pi. `sda` is usually the name of the inserted SD card, but you can check with `sudo fdisk -l` and look for the last entry.\
 Once complete, it will tell you to press `Enter` to finish. Do so and remove your new SD card.\
-Insert it into your new Pi, and connect to it through SSH.
->**NOTE** You must be connected to the same network the original Pi is connected to.\
+Insert it into your new Pi, and connect to it through [SSH](#connecting-to-the-pi).
+>**NOTE** You must be connected to the same network the original Pi is connected to.
 
-Next, [configure your Pi again](#configuring-the-pi), following ALL steps.
+Next, [configure your Pi again](#post-boot-configuration), following ALL steps.
 
 
 ## Connecting to inverter
