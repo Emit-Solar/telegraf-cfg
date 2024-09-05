@@ -90,18 +90,8 @@ A login prompt should appear. Enter the username and password you entered previo
 ---
 
 ### Configuring the Pi
-Enter the raspi-config screen.
-```
-sudo raspi-config
-```
-A blue screen with options should appear. \
-Using your arrow keys, choose `System Options -> Boot/ Auto Login -> Console AutoLogin`. It should bring you back to the home screen.\
-Next choose `Interface Options -> Serial Port -> No -> Yes`.\
-Choose `Finish -> No` to return back to the terminal.
 
----
-
-Due to restrictions on the TIME network, you must also manually set the time and date.
+Due to restrictions on the TIME network, you must first manually set the time and date.
 ```
 sudo date -s "<DAY> <MONTH> <DATE> <HH>:<MM>:<SS> UTC <YYYY>"
 ```
@@ -109,10 +99,23 @@ sudo date -s "<DAY> <MONTH> <DATE> <HH>:<MM>:<SS> UTC <YYYY>"
 
 ---
 
-Next update the system and install git, then clone and navigate to this repository.
+Update the system and enter the raspi-config screen.
 ```
 sudo apt-get update
 sudo apt-get upgrade
+sudo raspi-config
+```
+A blue screen with options should appear. \
+Using your arrow keys, choose `System Options -> Boot/ Auto Login -> Console AutoLogin`. It should bring you back to the home screen.\
+Next choose `Interface Options -> Serial Port -> Yes`.\
+Finally, choose `Interface Options -> RPi Connect -> Yes`. Follow any on-screen instructions.\
+Choose `Finish -> Yes` to reboot. 
+
+---
+Once it has rebooted, reconnect to it and update the system.\
+Setup rpi-connect by running `rpi-connect signin` and follow the displayed instrcuctions.\
+Next, install git, then clone and navigate to this repository.
+```
 sudo apt-get install git
 git clone https://github.com/xyberii4/emit-monitoring-pi.git
 cd emit-monitoring-pi
@@ -122,7 +125,7 @@ There should be two files, starting with either `huawei` or `growatt`. Open the 
 ```
 nano <INVERTER>_telegraf.conf
 ```
-Replacing \<INVERTER\> with the corresponding brand.\
+Replacing \<INVERTER\> with the corresponding brand.
 
 At the top of the file, under the `[global_tags]` section, there are two variables, `station` and `capacity`. Enter the customer's name in between the quotation marks for `station`, and replace any spaces with `_`. Do the same for capacity, in watts.
 
@@ -138,7 +141,7 @@ Next, execute the `setup.sh` file.
 ```
 sudo ./setup.sh
 ```
-This will setuo the CAN HAT and install telegraf.
+This will setup the CAN HAT and install telegraf.
 A prompt will also ask you if the customer's inverter is Huawei or Growatt.
 Once complete, the Pi will reboot.
 
@@ -149,25 +152,46 @@ Check telegraf is running successfully
 ```
 systemctl status telegraf.service
 ```
-If you see an `Error in plugin: could not open /dev/ttyAMA0: no such file or directory`, check the serial number of the CAN HAT.
+If you see an `Error in plugin: could not open /dev/ttyS0: no such file or directory`, check the serial number of the CAN HAT.
 ```
 $ ls -l /dev/serial*
-lrwxrwxrwx 1 root root 5, 0 Sep  4 11:46 /dev/serial0 -> ttyS0
+lrwxrwxrwx 1 root root 5, 0 Sep  4 11:46 /dev/serial0 -> ttyAMA0
 ```
-`ttyS0` is the new serial name. Open the telegraf configuration with
+`ttyAMA0` is the new serial name. Open the telegraf configuration with
 ```
 sudo nano /etc/telegraf/telegraf.conf
 ```
-and modify `controller` line, replacing `ttyAMA0` with `ttyS0`
+and modify `controller` line, replacing `ttyS0` with `ttyAMA0`
 ```toml
-  controller = "file:///dev/ttyS0"
+  controller = "file:///dev/ttyAMA0"
 ```
 Restart telegraf
 ```
 sudo systemctl restart telegraf
 ```
 
-# WiFi Configuration
+---
+
+## Another installation method
+Another way to install on a new Pi is by copying an existing SD card onto another.\
+Insert the SD card to be cloned to into the USB port of the Pi and run this command.
+```
+sudo rpi-clone -s <HOST> sda
+```
+Replace `<HOST>` with the new hostname you want for the Pi. `sda` is usually the name of the inserted SD card, but you can check with `sudo fdisk -l` and look for the last entry.\
+Once complete, it will tell you to press `Enter` to finish. Do so and remove your new SD card.\
+Insert it into your new Pi, and connect to it through SSH.
+>**NOTE** You must be connected to the same network the original Pi is connected to.\
+
+Next, [configure your Pi again](#configuring-the-pi), following ALL steps.
+
+
+## Connecting to inverter
+The CAN HAT has 4 ports, labelled H, L, B and A. You will only need the A and B ports. \
+A is the negative port, whilst B is the postive.\
+For Growatt models, connect port 3 on the inverter to port A on the Pi, and port 4 and port B together.
+
+# Wi-Fi Configuration
 Changing the WiFi network requires the new connection to be added to the Pi before the customer changes their network.\
 Connect to the Pi and access the Network Manger terminal interface.
 ```

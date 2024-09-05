@@ -22,7 +22,11 @@ fi
 echo "Modifying config.txt..."
 sudo bash -c 'echo "enable_uart=1" >> /boot/firmware/config.txt'
 
+loginctl enable-linger
 
 sudo bash -c 'echo "211.24.220.161  723tgfhf7917f32.time.com.my" >> /etc/hosts'
+
+echo "Installing rpi-clone..."
+curl https://raw.githubusercontent.com/geerlingguy/rpi-clone/master/install | sudo bash 
 
 sudo reboot now
