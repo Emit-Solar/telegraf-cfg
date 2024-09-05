@@ -30,8 +30,6 @@ Required software:
 - PuTTy (https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)
 - Raspberry Pi Imager (https://www.raspberrypi.com/software/)
 - Nmap (https://nmap.org/download#windows)
-- A Raspberrt Pi account (https://id.raspberrypi.com/sign-up)
-
 ---
 
 ### OS Setup
