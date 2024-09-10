@@ -125,7 +125,7 @@ git clone https://github.com/xyberii4/emit-monitoring-pi.git
 cd emit-monitoring-pi
 ```
 Next, you must modify the telegraf configuration file to match the customer's details.\
-There should be two files, starting with either `huawei` or `growatt`. Open the correct file with this command:
+There should be two files, starting with either `solis` or `growatt`. Open the correct file with this command:
 ```
 nano <INVERTER>_telegraf.conf
 ```

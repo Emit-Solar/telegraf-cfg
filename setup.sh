@@ -9,8 +9,8 @@ apt -y install telegraf
 usermod -aG dialout telegraf
 sudo systemctl enable telegraf
 
-read -p "Huawei or Growatt? [H/G]: " x
-if [[ "$x" == "h" || "$x" == "H" ]]; then
+read -p "Solis or Growatt? [S/G]: " x
+if [[ "$x" == "s" || "$x" == "S" ]]; then
     sudo cp ./huawei_telegraf.conf /etc/telegraf/telegraf.conf
 elif [[ "$x" == "g" || "$x" == "G" ]]; then
     sudo cp ./growatt_telegraf.conf /etc/telegraf/telegraf.conf
