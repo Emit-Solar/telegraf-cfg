@@ -21,7 +21,7 @@ sudo systemctl enable telegraf
 
 echo "Creating telegraf.conf..."
 if [[ "$x" == "s" || "$x" == "S" ]]; then
-    sudo cp ./huawei_telegraf.conf /etc/telegraf/telegraf.conf
+    sudo cp ./solis_telegraf.conf /etc/telegraf/telegraf.conf
     echo "Enabling the CAN HAT..."
     sleep 2
     sudo bash -c 'echo "enable_uart=1" >> /boot/firmware/config.txt'
