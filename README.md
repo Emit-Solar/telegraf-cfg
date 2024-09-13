@@ -110,8 +110,8 @@ sudo apt-get install git
 sudo raspi-config
 ```
 A blue screen with options should appear. \
-Using your arrow keys, choose `System Options -> Boot/ Auto Login -> Console AutoLogin`. It should bring you back to the home screen.\
-Next choose `Interface Options -> Serial Port -> Yes`.\
+Using your arrow keys, choose `System Options -> Boot/ Auto Login -> Console AutoLogin`.\
+Next choose `Interface Options -> Serial Port -> No -> Yes`.\
 Finally, choose `Interface Options -> RPi Connect -> Yes`. Follow any on-screen instructions.\
 Choose `Finish -> Yes` to reboot. 
 
